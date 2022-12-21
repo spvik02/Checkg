@@ -1,0 +1,17 @@
+                  CASH RECEIPT
+                    LocalShop
+                     Address
+                    Tel: 7717
+CASHIER: #717                      Date: 20/12/2022
+                                   Time: 17:24:50
+QTY DESCRIPTION                      PRICE    TOTAL
+2   milk                             $5,60    $5,60
+5   bread                           $11,00   $11,00
+5   tea                             $21,50   $21,50
+2   coffee                          $24,00   $24,00
+5   water                           $11,00    $9,90
+2   alcohol                         $14,40   $14,40
+--------------------------------------------------
+TAXABLE TOT.                                 $86,40
+DISCOUNT                                      $1,10
+TOTAL                                        $87,50

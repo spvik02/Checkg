@@ -1,0 +1,6 @@
+1; milk file; 2.8; true
+2; bread; 2.2; true
+3; tea; 4.3; true
+4; coffee; 12; true
+5; water; 2.2; false
+6; alcohol; 7.2; false
