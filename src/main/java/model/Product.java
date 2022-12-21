@@ -7,7 +7,6 @@ public class Product {
     private String name;
     private double price;
     private boolean isAtDiscount;   //скидка по скидочной карте
-    //private boolean isOnStock;      //скидка при покупке от 5 штук
 
 
     public Product(int id, String name, double price, boolean isAtDiscount) {

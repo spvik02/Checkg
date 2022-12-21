@@ -1,22 +1,12 @@
-import model.ProductInReceipt;
 import model.Receipt;
 import providers.*;
 import resourses.SourceType;
 import utils.ParametersUtil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.zip.DataFormatException;
 
 public class CheckRunner {
-
 
     public static void main(String[] args) {
         SourceType source = SourceType.GENERATOR;

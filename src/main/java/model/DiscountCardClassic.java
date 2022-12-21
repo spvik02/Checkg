@@ -30,8 +30,6 @@ public class DiscountCardClassic implements DiscountCard {
         this.id = id;
     }
 
-
-
     public LocalDate getDateOfRegistration() {
         return dateOfRegistration;
     }

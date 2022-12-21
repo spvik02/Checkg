@@ -62,7 +62,6 @@ public class Receipt {
         public Receipt build(){
             return new Receipt(this);
         }
-
     }
 
     public int getId() {
@@ -125,7 +124,7 @@ public class Receipt {
             try{
                 product = productProvider.getProductById(position.getIdProduct());
                 positionPrice = product.getPrice()
-                        * position.getQuantity();;
+                        * position.getQuantity();
             }catch (Exception e){
                 System.out.println(e.getMessage() + " Product will not be counted.");
                 position.setTotal(0);
@@ -206,10 +205,10 @@ public class Receipt {
         receipt.append(FormatUtil.formatLineTwoCol(paddingFooter, paddingPrice, "DISCOUNT", "$"+FormatUtil.formatNum2(FormatUtil.round(totalPrice-totalPriceWithDiscount)))).append("\n");
         receipt.append(FormatUtil.formatLineTwoCol(paddingFooter, paddingPrice, "TOTAL", "$"+ FormatUtil.formatNum2(totalPrice))).append("\n");
 
-        //System.out.println(receipt);
         return receipt;
     }
 
+    //записывает чек в файл
     public void writeReceipt(ProductProvider productProvider){
         String dateS = DateTimeFormatter.ofPattern("dd_MM_uuuu").format(date);
         String timeS = DateTimeFormatter.ofPattern("HH_mm_ss").format(time);

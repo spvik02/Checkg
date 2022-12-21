@@ -5,7 +5,6 @@ import utils.FormatUtil;
 import java.util.Objects;
 
 public class ProductInReceipt {
-    static int idGlobal = 0;
     private int id;
     private int idProduct;
     private int quantity;
@@ -13,7 +12,6 @@ public class ProductInReceipt {
     private double total;
 
     public ProductInReceipt( int idProduct, int quantity) {
-//        this.id = idGlobal++;
         this.idProduct = idProduct;
         this.quantity = quantity;
     }

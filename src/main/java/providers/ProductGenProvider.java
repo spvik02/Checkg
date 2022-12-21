@@ -16,6 +16,7 @@ public class ProductGenProvider implements ProductProvider{
     @Override
     public Product getProductById(int id) {
         return dataGenerator.getProducts().stream()
-                .filter(product -> id == product.getId()).findFirst().orElseThrow(()-> new NoSuchElementException("Product not found - " + id));
+                .filter(product -> id == product.getId()).findFirst()
+                .orElseThrow(()-> new NoSuchElementException("Product not found - " + id));
     }
 }
