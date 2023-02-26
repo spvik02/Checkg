@@ -8,8 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class ParametersUtilTest {
 
@@ -32,7 +31,7 @@ class ParametersUtilTest {
         @DisplayName("parseParameters with valid arg pairs should set positions correctly")
         void checkParseParametersShouldSetPositions() {
             String[] args = new String[]{"1-2", "2-5", "3-5"};
-            List<ProductInReceipt> expected = List.of(
+            List<ProductInReceipt> expectedPositions = List.of(
                     new ProductInReceipt( 1, 2),
                     new ProductInReceipt(2, 5),
                     new ProductInReceipt(3, 5)
@@ -40,21 +39,20 @@ class ParametersUtilTest {
 
             ParametersUtil.parseParameters(args, receipt);
 
-            assertThat(receipt).hasFieldOrPropertyWithValue("positions", expected);
-            //assertEquals(expected, receipt.getPositions());
+            assertThat(receipt).hasFieldOrPropertyWithValue("positions", expectedPositions);
         }
 
         @Test
-        @DisplayName("parseParameters with invalid arg pairs should set valid positions correctly and skip invalid")
+        @DisplayName("parseParameters with invalid arg pair format should set valid positions correctly and skip invalid")
         void checkParseParametersWithInvalidParameterFormatShouldSetPositions(){
             String[] args = new String[]{"Str-2", "2-5", "3-5", "Card-1"};
-            List<ProductInReceipt> expected = List.of(
+            List<ProductInReceipt> expectedPositions = List.of(
                     new ProductInReceipt( 2, 5),
                     new ProductInReceipt(3, 5)
             );
             ParametersUtil.parseParameters(args, receipt);
 
-            assertEquals(expected, receipt.getPositions());
+            assertThat(receipt).hasFieldOrPropertyWithValue("positions", expectedPositions);
         }
 
         @Test
@@ -65,19 +63,26 @@ class ParametersUtilTest {
             ParametersUtil.parseParameters(args, receipt);
 
             assertThat(receipt).hasFieldOrPropertyWithValue("discountCardId", 1);
-            //assertEquals(1, receipt.getDiscountCardId());
         }
 
         //the correctness of the discount card is checked when the receipt is calculated
         @Test
-        @DisplayName("parseParameters with a non-existent discountCardId should set discountCardId")
+        @DisplayName("parseParameters with a non-existing discountCardId should set discountCardId")
         void checkParseParametersWithInvalidCardIdShouldSetDiscountCardId(){
             String[] args = new String[]{"1-2", "2-5", "3-5", "Card-0"};
 
             ParametersUtil.parseParameters(args, receipt);
 
             assertThat(receipt).hasFieldOrPropertyWithValue("discountCardId", 0);
-            //assertEquals(1, receipt.getDiscountCardId());
+        }
+
+        @Test
+        @DisplayName("parseParameters with a incorrect discountCardId should throw NumberFormatException")
+        void checkParseParametersWithInvalidCardIdShouldThrowNumberFormatException(){
+            String[] args = new String[]{"1-2", "2-5", "3-5", "Card-str"};
+
+            assertThatExceptionOfType(NumberFormatException.class)
+                    .isThrownBy(() -> ParametersUtil.parseParameters(args, receipt));
         }
     }
 
@@ -88,11 +93,11 @@ class ParametersUtilTest {
         @DisplayName("readParametersFromFile with valid fileName should return String[] parameters")
         void checkReadParametersFromFileWithValidFileNameShouldReturnParameters(){
             String name = "parameters1.txt";
-            String[] expected = new String[]{"1-2", "2-5", "3-5", "4-2", "5-5", "6-2", "Card-2"};
+            String[] expectedArgs = new String[]{"1-2", "2-5", "3-5", "4-2", "5-5", "6-2", "Card-2"};
 
-            String[] actual = ParametersUtil.readParametersFromFile(name);
+            String[] actualArgs = ParametersUtil.readParametersFromFile(name);
 
-            assertArrayEquals(expected, actual);
+            assertThat(actualArgs).isEqualTo(expectedArgs);
         }
 
         @Test
@@ -100,9 +105,9 @@ class ParametersUtilTest {
         void checkReadParametersFromFileWithInvalidFileNameShouldReturnNull(){
             String name = "parameters4.txt";
 
-            String[] actual = ParametersUtil.readParametersFromFile(name);
+            String[] actualArgs = ParametersUtil.readParametersFromFile(name);
 
-            assertArrayEquals(null, actual);
+            assertThat(actualArgs).isNull();
         }
 
         @Test
@@ -110,10 +115,9 @@ class ParametersUtilTest {
         void checkReadParametersFromFileWithEmptyFileShouldReturnNull(){
             String name = "parameters3.txt";
 
-            String[] actual = ParametersUtil.readParametersFromFile(name);
+            String[] actualArgs = ParametersUtil.readParametersFromFile(name);
 
-            assertThat(actual).isNull();
-            //assertArrayEquals(null, actual);
+            assertThat(actualArgs).isNull();
         }
     }
 }
