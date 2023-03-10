@@ -80,4 +80,27 @@ class LruCacheTest{
             );
         }
     }
+    @Nested
+    class Delete{
+        @Test
+        void checkDeleteShouldDeleteFromCache(){
+            lruCache.put(1, products.get(1));
+            lruCache.delete(1);
+            assertThat(lruCache.get(1)).isNull();
+        }
+        @Test
+        void checkDeleteShouldPutProduct3(){
+            lruCache.put(1, products.get(1));
+            lruCache.put(2, products.get(2));
+            lruCache.get(1);
+            lruCache.get(1);
+            lruCache.delete(1);
+            lruCache.put(3, products.get(3));
+            assertAll(
+                    () -> assertThat(lruCache.get(1)).isNull(),
+                    () -> assertThat(lruCache.get(2)).isEqualTo(products.get(2)),
+                    () -> assertThat(lruCache.get(3)).isEqualTo(products.get(3))
+            );
+        }
+    }
 }

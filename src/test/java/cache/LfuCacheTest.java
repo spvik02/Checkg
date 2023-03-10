@@ -89,4 +89,42 @@ class LfuCacheTest {
             );
         }
     }
+
+    @Nested
+    class Delete{
+        @Test
+        void checkDeleteShouldDeleteFromCache(){
+            lfuCache.put(1, products.get(1));
+            lfuCache.delete(1);
+            assertThat(lfuCache.get(1)).isNull();
+        }
+        @Test
+        void checkDeleteShouldDeleteFromCacheFromAllMaps(){
+            lfuCache.put(1, products.get(1));
+            lfuCache.put(2, products.get(2));
+            lfuCache.get(1);
+            lfuCache.get(1);
+            lfuCache.delete(1);
+            lfuCache.put(3, products.get(3));
+            assertAll(
+                    () -> assertThat(lfuCache.get(1)).isNull(),
+                    () -> assertThat(lfuCache.get(2)).isEqualTo(products.get(2)),
+                    () -> assertThat(lfuCache.get(3)).isEqualTo(products.get(3))
+            );
+        }
+        @Test
+        void checkDeleteShouldResetMin(){
+            lfuCache.put(2, products.get(2));
+            lfuCache.put(1, products.get(1));
+            lfuCache.get(1);
+            lfuCache.get(1);
+            lfuCache.delete(2);
+            lfuCache.put(3, products.get(3));
+            assertAll(
+                    () -> assertThat(lfuCache.get(2)).isNull(),
+                    () -> assertThat(lfuCache.get(1)).isEqualTo(products.get(1)),
+                    () -> assertThat(lfuCache.get(3)).isEqualTo(products.get(3))
+            );
+        }
+    }
 }
