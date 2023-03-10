@@ -27,3 +27,20 @@ output:
 ![image](https://user-images.githubusercontent.com/111181469/208943385-917a3cbe-5ec2-41c8-88c3-8fc7d7779f28.png)
 
 the receipt is also written to a file in the folder src/main/resources/receipts 
+
+# Cache
+
+На ветке feature/cache.
+- Создана еализация кэша, используя алгоритмы LRU и LFU: [src/main/java/cache/](https://github.com/spvik02/Checkg/tree/feature/cache/src/main/java/cache/)
+- Алгоритм и максимальный размер коллекции считываются из файла resources/application.yml. Если значения не заданы, то ставятся по умолчанию: [createCache()](https://github.com/spvik02/Checkg/blob/feature/cache/src/main/java/cache/CacheFactory.java)
+- Коллекция инициализируется через фабрику: [src/main/java/cache/CacheFactory.java](https://github.com/spvik02/Checkg/blob/feature/cache/src/main/java/cache/CacheFactory.java)
+- Код содержbn javadoc и описанный README.md.
+- Кеши покрыты тестами: [src/test/java/cache/](https://github.com/spvik02/Checkg/tree/feature/cache/src/test/java/cache/)
+- Создана entity Cashier, в ней  поле id и еще 3 поля: [ src/main/java/model/Cashier.java](https://github.com/spvik02/Checkg/blob/feature/cache/src/main/java/model/Cashier.java) 
+- Добавлено поле, проверяемое regex.
+- В приложении созданы слои service ([src/main/java/service/](https://github.com/spvik02/Checkg/tree/feature/cache/src/main/java/service/)) и dao ([src/main/java/dao/](https://github.com/spvik02/Checkg/tree/feature/cache/src/main/java/dao/)) для Cashier (service вызывает слой dao, слой dao - временная замена database). В этих сервисах реализованы CRUD операции для работы с entity
+- Результат работы dao синхронизируется с кешем через proxy ([src/main/java/service](https://github.com/spvik02/Checkg/tree/feature/cache/src/main/java/service/)) (кастомная аннотация: ([src/main/java/annotation/](https://github.com/spvik02/Checkg/tree/feature/cache/src/main/java/annotation))). При работе с entity оперируем id. Алгоритм работы с кешем: 
+  - GET - ищем в кеше и если там данных нет, то достаем объект из dao, сохраняем в кеш и возвращаем
+  - POST - сохраняем в dao и потом сохраняем в кеше
+  - DELETE - удаляем из dao и потом удаляем в кеша
+  - PUT - обновление/вставка в dao и потом обновление/вставка в кеше.
