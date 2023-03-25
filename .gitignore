@@ -19,3 +19,4 @@ out/
 
 #resources
 src/main/resources/receipts/
+src/main/resources/receiptsPdf/
