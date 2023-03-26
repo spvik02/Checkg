@@ -5,14 +5,10 @@ import providers.ProductProvider;
 import providers.StockProvider;
 import utils.FormatUtil;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class Receipt {
     private int id;
@@ -104,6 +100,10 @@ public class Receipt {
         this.totalPriceWithDiscount = FormatUtil.round(totalPriceWithDiscount);
     }
 
+    public int getCashier() {
+        return cashier;
+    }
+
     public LocalDate getDate() {
         return date;
     }
@@ -158,73 +158,5 @@ public class Receipt {
         }
         setTotalPrice(totalPrice);
         setTotalPriceWithDiscount(totalPriceWithDiscount);
-    }
-
-    public StringBuilder createReceipt(ProductProvider productProvider) {
-        String title = "CASH RECEIPT";
-        String nameStore = "LocalShop";
-        String address = "Address";
-        String number = "7717";
-
-        int length = 50;
-        int paddingQty = -4;
-        int paddingPrice = 9;
-        int paddingForDateTime = -(length*2/3)-paddingPrice*2+16;
-        int paddingDesc = -(length*2/3)-paddingQty;
-        int paddingFooter = -(length*2/3)-paddingPrice;
-
-        String dateS = DateTimeFormatter.ofPattern("dd/MM/uuuu").format(date);
-        String timeS = DateTimeFormatter.ofPattern("HH:mm:ss").format(time);
-        //шапка чека
-        StringBuilder receipt= new StringBuilder(FormatUtil.formatLineCenter(length, title + "\n"));
-        receipt.append(FormatUtil.formatLineCenter(length, nameStore + "\n"));
-        receipt.append(FormatUtil.formatLineCenter(length, address)).append("\n");
-        receipt.append(FormatUtil.formatLineCenter(length, "Tel: " + number  + "\n"));
-
-        receipt.append(FormatUtil.formatLineTwoCol(paddingForDateTime, 1,"CASHIER: #" + cashier, "Date: " + dateS+ "\n"));
-        receipt.append(FormatUtil.formatLineTwoCol(paddingForDateTime, 1, "", "Time: " + timeS+ "\n"));
-
-        receipt.append(FormatUtil.formatFourCol(paddingQty, paddingDesc, paddingPrice, paddingPrice, "QTY", "DESCRIPTION", "PRICE", "TOTAL")).append("\n");
-        //вывод продуктов
-        for(var position : positions){
-            try{
-                receipt.append(FormatUtil.formatFourCol(paddingQty, paddingDesc, paddingPrice, paddingPrice,
-                                String.valueOf(position.getQuantity()),
-                                productProvider.getProductById(position.getIdProduct()).getName(),
-                                "$" + FormatUtil.formatNum2(position.getPrice()),
-                                "$" + FormatUtil.formatNum2(position.getTotal())))
-                        .append("\n");
-            }catch (NoSuchElementException ignored){
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-        }
-        receipt.append("-".repeat(length)).append("\n");
-        //вывод общей стоимости
-        receipt.append(FormatUtil.formatLineTwoCol(paddingFooter, paddingPrice, "TAXABLE TOT.", "$"+FormatUtil.formatNum2(totalPriceWithDiscount))).append("\n");
-        receipt.append(FormatUtil.formatLineTwoCol(paddingFooter, paddingPrice, "DISCOUNT", "$"+FormatUtil.formatNum2(FormatUtil.round(totalPrice-totalPriceWithDiscount)))).append("\n");
-        receipt.append(FormatUtil.formatLineTwoCol(paddingFooter, paddingPrice, "TOTAL", "$"+ FormatUtil.formatNum2(totalPrice))).append("\n");
-
-        return receipt;
-    }
-
-    //записывает чек в файл
-    public void writeReceipt(ProductProvider productProvider){
-        String dateS = DateTimeFormatter.ofPattern("dd_MM_uuuu").format(date);
-        String timeS = DateTimeFormatter.ofPattern("HH_mm_ss").format(time);
-        String path = "src/main/resources/receipts";
-        String name = "receipt-" + dateS + "-" + timeS + ".txt";
-
-        File dir = new File(path);
-        dir.mkdirs();
-
-        try (
-                FileWriter fileWriter = new FileWriter(path + File.separator + name);
-                PrintWriter printWriter = new PrintWriter(fileWriter)
-        ){
-            printWriter.print(createReceipt(productProvider));
-        } catch (IOException e) {
-            System.out.println("error: " +e.getMessage());
-        }
     }
 }

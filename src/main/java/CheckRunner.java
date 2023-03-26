@@ -1,8 +1,12 @@
+import com.itextpdf.text.DocumentException;
+import managers.ReceiptPrintManager;
 import model.Receipt;
 import providers.*;
 import resourses.SourceType;
 import utils.ParametersUtil;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -16,13 +20,13 @@ public class CheckRunner {
         ProductProvider productProvider;
         StockProvider stockProvider;
         DiscountCardProvider discountCardProvider;
+        ReceiptPrintManager receiptPrintManager = new ReceiptPrintManager();
 
         Receipt receipt = new Receipt.ReceiptBuilder()
                 .withCashier(717)
                 .withDateTime(LocalDate.now(), LocalTime.now())
                 .build();
 
-        //добавляем позиции чека из параметров/файла
         if (args[0].contains("File")){
             source = SourceType.FILE;
             String fileName = args[0].substring(args[0].indexOf("-") + 1);
@@ -34,17 +38,18 @@ public class CheckRunner {
             ParametersUtil.parseParameters(args, receipt);
         }
 
-        //создаем провайдеры для данных в зависимости от указанного источника данных
         productProvider = productProviderFactory.createProductProvider(source);
         stockProvider = stockProviderFactory.createProductProvider(source);
         discountCardProvider = discountCardProviderFactory.createDiscountCardProvider(source);
 
-
         receipt.calculateTotal(productProvider, stockProvider, discountCardProvider);
-        //print receipt to console
-        System.out.println(receipt.createReceipt(productProvider));
-        //write receipt to file
-        receipt.writeReceipt(productProvider);
 
+        System.out.println(receiptPrintManager.createReceipt(receipt, productProvider));
+        receiptPrintManager.writeToTxt(receipt, productProvider);
+        try {
+            receiptPrintManager.writeToPdf(receipt, productProvider);
+        } catch (DocumentException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
