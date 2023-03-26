@@ -1,4 +1,5 @@
 import com.itextpdf.text.DocumentException;
+import managers.ReceiptPrintManager;
 import model.Receipt;
 import providers.*;
 import resourses.SourceType;
@@ -19,6 +20,7 @@ public class CheckRunner {
         ProductProvider productProvider;
         StockProvider stockProvider;
         DiscountCardProvider discountCardProvider;
+        ReceiptPrintManager receiptPrintManager = new ReceiptPrintManager();
 
         Receipt receipt = new Receipt.ReceiptBuilder()
                 .withCashier(717)
@@ -42,10 +44,10 @@ public class CheckRunner {
 
         receipt.calculateTotal(productProvider, stockProvider, discountCardProvider);
 
-        System.out.println(receipt.createReceipt(productProvider));
-        receipt.writeReceipt(productProvider);
+        System.out.println(receiptPrintManager.createReceipt(receipt, productProvider));
+        receiptPrintManager.writeToTxt(receipt, productProvider);
         try {
-            receipt.writeToPdf(productProvider);
+            receiptPrintManager.writeToPdf(receipt, productProvider);
         } catch (DocumentException | IOException e) {
             throw new RuntimeException(e);
         }
